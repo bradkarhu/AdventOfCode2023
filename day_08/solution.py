@@ -3,23 +3,18 @@ import time
 class Part1:
     @staticmethod
     def solution(lines: list[str]) -> int:
-        return Helper.get_num_steps(lines, "AAA", "ZZZ")
+        return Helper.get_num_steps(lines, "AAA", ["ZZZ"])
 
 class Part2:    
     @staticmethod
     def solution(lines: list[str]) -> int:
-        starting_nodes = Helper.get_nodes(lines, ending_in="A")
-        stopping_nodes = Helper.get_nodes(lines, ending_in="Z")
-        min_steps = []
-        for i in range(len(starting_nodes)):
-            steps = []            
-            for j in range(len(stopping_nodes)):
-                steps.append(Helper.get_num_steps(lines, starting_nodes[i], stopping_nodes[j], limit=100000))
-            min_steps.append(min(steps))
-        return Helper.lcm(min_steps)
+        a_nodes = Helper.get_nodes(lines, ending_in="A")
+        z_nodes = Helper.get_nodes(lines, ending_in="Z")
+        steps = [Helper.get_num_steps(lines, a, z_nodes) for a in a_nodes]
+        return Helper.lcm(steps)
 
 class Helper:
-    def get_num_steps(lines: list[str], start: str, stop: str, limit: int = -1) -> int:        
+    def get_num_steps(lines: list[str], start: str, stop_nodes: list[str]) -> int:        
         dirs = lines[0]
         num_dirs = len(dirs)
         nodes = {}
@@ -31,7 +26,7 @@ class Helper:
         current_index = 0
         current_node = start
         num_steps = 0
-        while current_node != stop:
+        while not any([current_node == x for x in stop_nodes]):
             if dirs[current_index] == 'R':
                 current_node = nodes[current_node][1]
             else:
@@ -39,7 +34,6 @@ class Helper:
             current_index += 1
             if current_index == num_dirs: current_index = 0
             num_steps += 1
-            if num_steps == limit: break # needed for part 2, if A never reaches Z
         return num_steps
     
     def get_nodes(lines: list[str], ending_in: str) -> int:
@@ -64,4 +58,4 @@ toc = time.perf_counter()
 print(f"Took {toc - tic:0.4f} seconds")
 #Part 1: 15871
 #Part 2: 11283670395017
-#Took 0.2383 seconds
+#Took 0.0387 seconds
