@@ -8,28 +8,23 @@ class Part1:
 class Part2:
     @staticmethod
     def solution(line: str) -> int:
-        boxes = []
-        for _ in range(256): boxes.append([]) # init
+        boxes = [{} for _ in range(256)] # init
         for s in line.split(','):
             if s[-1] == '-':
                 a = s[:-1]
                 box = boxes[Helper.hash(a)]
-                index = Helper.get_index(box, a)
-                if index >= 0: 
-                    del box[index]
+                if a in box: del box[a]
             else:
                 a, lens = s.split('=')
                 box = boxes[Helper.hash(a)]
-                index = Helper.get_index(box, a)
-                if index >= 0: 
-                    box[index] = (a, lens)
-                else: 
-                    box.append((a, lens))
+                box[a] = int(lens) # python dict is ordered!
         #print(boxes)
         total = 0
         for i in range(len(boxes)):
-            for j in range(len(boxes[i])):
-                total += (i+1) * (j+1) * int(boxes[i][j][1])
+            j = 1
+            for _,v in boxes[i].items():
+                total += (i+1) * j * v
+                j += 1
         return total
 
 class Helper:
@@ -40,11 +35,6 @@ class Helper:
             value *= 17
             value %= 256
         return value
-    
-    def get_index(box: list[tuple], a: str) -> int:
-        for i in range(len(box)):
-            if box[i][0] == a: return i
-        return -1
 
 tic = time.perf_counter()
 #with open("sample.txt", "r") as file:
