@@ -23,24 +23,21 @@ class Part2:
     @staticmethod
     def solution(lines: list[str]) -> int:
         matrix = Helper.build_matrix(lines)
-        matrices = []
         lookup = {}
         cycles = 1000000000
+        stop_at_index = -1
         for i in range(cycles):
             Helper.swap_matrix(matrix)
-            hash = Helper.hash_matrix(matrix)
-            if hash in lookup:                
-                first = lookup.get(hash)
-                diff = i - first
-                #print(f'found loop between {first} and {i} (diff = {diff})')
-                remaining = cycles - i - 1
-                offset = remaining % diff
-                index = len(matrices) - diff + offset
-                #print(f'skip the rest and get load from index {index}')
-                matrix = matrices[index]
-                break
-            copy = Helper.copy_matrix(matrix)
-            matrices.append(copy)
+            if stop_at_index != -1:
+                if stop_at_index == i:
+                    break
+            else:
+                hash = Helper.hash_matrix(matrix)
+                if hash in lookup:
+                    diff = i - lookup.get(hash)
+                    remaining = cycles - i - 1
+                    offset = remaining % diff
+                    stop_at_index = i + offset
             lookup[hash] = i
         #Helper.print_matrix(matrix)
         load = Helper.get_load_matrix(matrix)
