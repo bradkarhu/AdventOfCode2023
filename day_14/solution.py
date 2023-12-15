@@ -3,51 +3,35 @@ import time
 class Part1:
     @staticmethod
     def solution(lines: list[str]) -> int:
-        size = len(lines)
-        load = 0
-        #Helper.print_lines(lines)
-        for col in range(size):
-            data = [0] * size
-            for row in range(size):
-                c = lines[row][col]
-                if c == 'O': data[size - row - 1] = 1
-                elif c == '#': data[size - row - 1] = 2
-            #print(data)
-            changed = True
-            while changed: changed = Helper.swap(data)
-            #print(data)
-            load += Helper.get_load(data)
-        return load
+        grid = Helper.build_grid(lines)
+        Helper.tilt_north(grid)
+        #Helper.print(grid)
+        return Helper.get_load(grid)
 
 class Part2:
     @staticmethod
     def solution(lines: list[str]) -> int:
-        matrix = Helper.build_matrix(lines)
+        grid = Helper.build_grid(lines)
         lookup = {}
         cycles = 1000000000
         stop_at_index = -1
         for i in range(cycles):
-            Helper.swap_matrix(matrix)
+            Helper.cycle(grid)
             if stop_at_index != -1:
                 if stop_at_index == i:
                     break
             else:
-                hash = Helper.hash_matrix(matrix)
+                hash = Helper.hash(grid)
                 if hash in lookup:
                     diff = i - lookup.get(hash)
                     remaining = cycles - i - 1
                     offset = remaining % diff
                     stop_at_index = i + offset
             lookup[hash] = i
-        #Helper.print_matrix(matrix)
-        load = Helper.get_load_matrix(matrix)
-        return load
+        #Helper.print(grid)
+        return Helper.get_load(grid)
 
 class Helper:
-    def print_lines(lines: list[str]):
-        for line in iter(lines):
-            print(line)
-    
     def pad_input(lines: list[str]) -> list[str]:
         width = len(lines[0]) + 2
         padded = []
@@ -56,100 +40,77 @@ class Helper:
             padded.append("#" + line + "#")
         padded.append("#" * width)
         return padded
-    
-    def swap(data: list[int]) -> bool:
-        changed = False
-        for i in range(len(data) - 1):
-            if data[i] != 1: continue # look for Os 
-            for j in range(i + 1, len(data)):
-                if data[j] == 2: break # stop at #
-                if data[j] == 0: # swap . with O
-                    data[i] = 0
-                    data[j] = 1
-                    i += 1
-                    changed = True
-        return changed
-    
-    def get_load(data: list[int]) -> int:
-        load = 0
-        for i in range(len(data)):
-            if data[i] == 1: load += i
-        return load
-    
-    # PART 2 METHODS
-    
-    def build_matrix(lines: list[str]) -> list[list[int]]:
+
+    def build_grid(lines: list[str]) -> list[list[int]]:
         size = len(lines)
-        matrix = []
-        for _ in range(size): matrix.append([0] * size) # init
+        grid = []
+        for _ in range(size): grid.append([0] * size) # init
         for row in range(size):
             for col in range(size):
-                if lines[row][col] == 'O':   matrix[row][col] = 1
-                elif lines[row][col] == '#': matrix[row][col] = 2
-        return matrix
+                if lines[row][col] == 'O':   grid[row][col] = 1
+                elif lines[row][col] == '#': grid[row][col] = 2
+        return grid
 
-    def print_matrix(matrix: list[list[int]]):
-        size = len(matrix)
+    def print(grid: list[list[int]]):
+        size = len(grid)
         load = size - 2
         for row in range(1, size - 1):
             line = ""
             for col in range(1, size - 1):
-                if matrix[row][col] == 0: line += "."
-                elif matrix[row][col] == 1: line += "O"
-                elif matrix[row][col] == 2: line += "#"
+                if grid[row][col] == 0: line += "."
+                elif grid[row][col] == 1: line += "O"
+                elif grid[row][col] == 2: line += "#"
             line += f" {load}"
             print(line)
             load -= 1
-        print("")
-    
-    def swap_matrix(matrix: list[list[int]]):
-        Helper.swap_matrix_ns(matrix, -1) # north
-        Helper.swap_matrix_we(matrix, -1) # west
-        Helper.swap_matrix_ns(matrix, 1)  # south
-        Helper.swap_matrix_we(matrix, 1)  # east
-    
-    def swap_matrix_ns(matrix: list[list[int]], dir: int):
-        size = len(matrix)
+
+    def cycle(grid: list[list[int]]):
+        Helper.tilt_north(grid)
+        Helper.tilt_west(grid)
+        Helper.tilt_south(grid)
+        Helper.tilt_east(grid)
+
+    def tilt_north(grid: list[list[int]]): Helper.tilt_north_south(grid, -1)
+    def tilt_south(grid: list[list[int]]): Helper.tilt_north_south(grid, 1)
+    def tilt_west(grid: list[list[int]]): Helper.tilt_east_west(grid, -1)
+    def tilt_east(grid: list[list[int]]): Helper.tilt_east_west(grid, 1)
+
+    def tilt_north_south(grid: list[list[int]], dir: int):
+        size = len(grid)
         for col in range(size) if dir == 1 else range(size - 1, 0, -1):
             for row in range(size - 1) if dir == 1 else range(size - 1, 1, -1):
-                if matrix[row][col] != 1: continue # look for Os
+                if grid[row][col] != 1: continue # look for Os
                 for x in range(row + 1, size) if dir == 1 else range(row - 1, 0, -1):
-                    if matrix[x][col] > 1: break # stop at #
-                    if matrix[x][col] == 0: # swap . with O
-                        matrix[row][col] = 0
-                        matrix[x][col] = 1
+                    if grid[x][col] > 1: break # stop at #
+                    if grid[x][col] == 0: # swap . with O
+                        grid[row][col] = 0
+                        grid[x][col] = 1
                         row += dir
-    
-    def swap_matrix_we(matrix: list[list[int]], dir: int):
-        size = len(matrix)
+
+    def tilt_east_west(grid: list[list[int]], dir: int):
+        size = len(grid)
         for row in range(size) if dir == 1 else range(size - 1, 0, -1):
             for col in range(size - 1) if dir == 1 else range(size - 1, 1, -1):
-                if matrix[row][col] != 1: continue # look for Os
+                if grid[row][col] != 1: continue # look for Os
                 for x in range(col + 1, size) if dir == 1 else range(col - 1, 0, -1):
-                    if matrix[row][x] > 1: break # stop at #
-                    if matrix[row][x] == 0: # swap . with O
-                        matrix[row][col] = 0
-                        matrix[row][x] = 1
+                    if grid[row][x] > 1: break # stop at #
+                    if grid[row][x] == 0: # swap . with O
+                        grid[row][col] = 0
+                        grid[row][x] = 1
                         col += dir
-    
-    def copy_matrix(matrix: list[list[int]]) -> list[list[int]]:
-        return [l.copy() for l in matrix]
-    
-    def hash_matrix(matrix: list[list[int]]) -> int:
-        return hash(tuple(Helper.hash_list(i) for i in matrix))
 
-    def hash_list(list: list[int]) -> int:
-        return hash(tuple(list))
-    
-    def get_load_matrix(matrix: list[list[int]]) -> int:
-        size = len(matrix)
+    def hash(grid: list[list[int]]) -> int:
+        return hash( tuple( tuple(i) for i in grid ) )
+
+    def get_load(grid: list[list[int]]) -> int:
+        size = len(grid)
         sum = 0
         load = size - 2 # remove padding
         for row in range(1, size - 1):
-            sum += load * matrix[row].count(1)
+            sum += load * grid[row].count(1)
             load -= 1
         return sum
-    
+
 tic = time.perf_counter()
 #with open("sample.txt", "r") as file:
 with open("input.txt", "r") as file:
