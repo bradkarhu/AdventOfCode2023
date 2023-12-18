@@ -8,36 +8,32 @@ class Part1:
         x = 0
         y = 0
         for line in iter(lines):
-            dir, steps_s, color_s = line.split()
+            dir, steps_s, _ = line.split()
             steps = int(steps_s)
-            color = color_s[2:-1]
-            color_hash = hash(color)
-            if not color_hash in colors:
-                colors[color_hash] = color
             if dir == 'U':
                 for j in range(1, steps + 1):
                     if y - j < 0: 
                         Helper.grow_up(grid)
                     else: y -= 1
-                    grid[y][x] = color_hash
+                    grid[y][x] = 1
             if dir == 'D':
                 for j in range(1, steps + 1):
                     if y + j >= len(grid): 
                         Helper.grow_down(grid)
                     y += 1
-                    grid[y][x] = color_hash
+                    grid[y][x] = 1
             elif dir == 'L':
                 for i in range(1, steps + 1):
                     if x - i < 0: 
                         Helper.grow_left(grid)
                     else: x -= 1
-                    grid[y][x] = color_hash
+                    grid[y][x] = 1
             elif dir == 'R':
                 for i in range(1, steps + 1):
                     if x + i >= len(grid[0]):
                         Helper.grow_right(grid)
                     x += 1
-                    grid[y][x] = color_hash
+                    grid[y][x] = 1
         # pad to avoid boundary checks while digging
         Helper.grow_up(grid)
         Helper.grow_down(grid)
@@ -48,11 +44,22 @@ class Part1:
         return vol
 
 class Part2:
+    # Can't brute force. Python gobbles > 100GB memory just for the sample.
     @staticmethod
     def solution(lines: list[str]) -> int:
-        return 0
+        for line in iter(lines):
+            _, _, instructions = line.split()
+            instructions = instructions[2:-1]
+            match int(instructions[-1]):
+                case 0: dir = 'R'
+                case 1: dir = 'D'
+                case 2: dir = 'L'
+                case 3: dir = 'U'
+            steps = int(instructions[:-1], 16)
+            print(f'#{instructions} = {dir} {steps}')
 
-colors = {}
+        
+        return 0
 
 class Helper:
     def grow_up(grid: list[list[int]]):
@@ -94,8 +101,8 @@ class Helper:
             print(line)
         
 tic = time.perf_counter()
-#with open("sample.txt", "r") as file:
-with open("input.txt", "r") as file:
+with open("sample.txt", "r") as file:
+#with open("input.txt", "r") as file:
     f = file.read().splitlines()
 print(f"Part 1: {Part1.solution(f)}")
 print(f"Part 2: {Part2.solution(f)}")
