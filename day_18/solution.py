@@ -43,23 +43,54 @@ class Part1:
         vol = Helper.dig(grid)
         return vol
 
+    # Can't brute force. Python gobbles > 100GB memory just for the sample.
+    @staticmethod
+    def optimized(lines: list[str]) -> int:
+        x = 0
+        y = 0
+        perimeter = 0
+        vertices = []
+        for line in iter(lines):
+            dir, steps_s, _ = line.split()
+            steps = int(steps_s)
+            perimeter += steps
+            vertices.append((x, y))
+            match dir:
+                case 'R': x += steps
+                case 'D': y += steps
+                case 'L': x -= steps
+                case 'U': y -= steps
+        #print(f'perimeter: {perimeter}')
+        area = Helper.area(vertices)
+        #print(f'area: {area}')
+        vol = (area + perimeter) // 2 + 1
+        return vol
+    
 class Part2:
     # Can't brute force. Python gobbles > 100GB memory just for the sample.
     @staticmethod
     def solution(lines: list[str]) -> int:
+        x = 0
+        y = 0
+        perimeter = 0
+        vertices = []
         for line in iter(lines):
             _, _, instructions = line.split()
             instructions = instructions[2:-1]
-            match int(instructions[-1]):
-                case 0: dir = 'R'
-                case 1: dir = 'D'
-                case 2: dir = 'L'
-                case 3: dir = 'U'
             steps = int(instructions[:-1], 16)
-            print(f'#{instructions} = {dir} {steps}')
-
-        
-        return 0
+            perimeter += steps
+            vertices.append((x, y))
+            match int(instructions[-1]):
+                case 0: dir = 'R'; x += steps
+                case 1: dir = 'D'; y += steps
+                case 2: dir = 'L'; x -= steps
+                case 3: dir = 'U'; y -= steps
+            #print(f'#{instructions} = {dir} {steps}')            
+        #print(f'perimeter: {perimeter}')
+        area = Helper.area(vertices)
+        #print(f'area: {area}')
+        vol = (area + perimeter) // 2 + 1
+        return vol
 
 class Helper:
     def grow_up(grid: list[list[int]]):
@@ -99,15 +130,29 @@ class Helper:
                 if grid[j][i] == 0: line += '.'
                 else: line += '#'
             print(line)
-        
-tic = time.perf_counter()
-with open("sample.txt", "r") as file:
-#with open("input.txt", "r") as file:
+
+    # shoelace formula
+    def area(vertices) -> int:
+        area = 0
+        for i in range(len(vertices) - 1):
+            area += vertices[i][0] * vertices[i + 1][1]
+            area -= vertices[i][1] * vertices[i + 1][0]
+        return area
+
+#with open("sample.txt", "r") as file:
+with open("input.txt", "r") as file:
     f = file.read().splitlines()
-print(f"Part 1: {Part1.solution(f)}")
+tic = time.perf_counter()
+print(f"Part 1: {Part1.solution(f)} (brute force)")
+toc = time.perf_counter()
+print(f"Took {toc - tic:0.4f} seconds")
+# Part 1: 50603 (brute force)
+# Took 0.0086 seconds
+tic = time.perf_counter()
+print(f"Part 1: {Part1.optimized(f)} (optimized)")
 print(f"Part 2: {Part2.solution(f)}")
 toc = time.perf_counter()
 print(f"Took {toc - tic:0.4f} seconds")
-# Part 1: 50603
-# Part 2: 0
-# Took 0.0088 seconds
+# Part 1: 50603 (optimized)
+# Part 2: 96556251590677
+# Took 0.0006 seconds
