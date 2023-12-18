@@ -16,10 +16,6 @@ class Helper:
         nj = len(lines)
         ni = len(lines[0])
         graph = Graph()
-        # add start node with zero loss edges to itself in each direction
-        start = (0, 0, "")
-        graph.add_edge(start, (0, 0, "V"), (0, "V"))
-        graph.add_edge(start, (0, 0, "H"), (0, "H"))
         for j in range(0, nj):
             for i in range(0, ni):
                 loss = 0
@@ -51,23 +47,23 @@ class Helper:
                     graph.add_edge((j, i, "V"), (j+y, i, "V"), (loss, "V"))
                     graph.add_edge((j, i, "H"), (j+y, i, "V"), (loss, "V"))
         #print(graph.node_count)
-        #print(graph.edge_count)
-        heat_loss = None
-        shortest_path = None
-        for dir in ["H", "V"]:
-            try:
-                path = find_path(graph, start, (nj-1, ni-1, dir), cost_func=Helper.cost_func)
-                if heat_loss is None or heat_loss > path.total_cost:
-                    shortest_path = path
-                    heat_loss = path.total_cost
-            except:
-                pass
-        #print(shortest_path)
-        return heat_loss
+        #print(graph.edge_count)        
+        # add start and end nodes with zero-loss edges to themselves in each direction
+        start = (0, 0, "#")
+        graph.add_edge(start, (0, 0, "V"), (0, "V"))
+        graph.add_edge(start, (0, 0, "H"), (0, "H"))
+        end = (nj-1, ni-1, "#")
+        graph.add_edge((nj-1, ni-1, "V"), end, (0, "#"))
+        graph.add_edge((nj-1, ni-1, "H"), end, (0, "#"))
+        # find path with lowest heat loss from start to end
+        path = find_path(graph, start, end, cost_func=Helper.cost_func)
+        #print(path)
+        return path.total_cost
 
     def cost_func(u, v, edge, prev_edge):
         loss, dir = edge
         if prev_edge:
+            # must flip direction from previous run
             if prev_edge[1] == dir:
                 return 1e7
         return loss
@@ -82,4 +78,4 @@ toc = time.perf_counter()
 print(f"Took {toc - tic:0.4f} seconds")
 #Part 1: 1099
 #Part 2: 1266
-#Took 2.0303 seconds
+#Took 1.5033 seconds
