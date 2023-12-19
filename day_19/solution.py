@@ -74,42 +74,33 @@ class Part2:
         #print(f'A: {accepted:,}')
         return accepted
 
+order = ['x', 'm', 'a', 's']
+
 class Part:
-    def __init__(self, x: int, m: int, a: int, s: int):
-        self.x = x
-        self.m = m
-        self.a = a
-        self.s = s
+    def __init__(self, xmas):
+        self.xmas = xmas
 
     def to_string(self) -> str:
-        return f'{{x={self.x},m={self.m},a={self.a},s={self.s}}}'
-    
+        return f'{{x={self.xmas[0]},m={self.xmas[1]},a={self.xmas[2]},s={self.xmas[3]}}}'
+
     def sum(self) -> int:
-        return self.x + self.m + self.a + self.s
-    
+        return sum(self.xmas)
+
     def is_less_than(self, letter: chr, value: int) -> bool:
-        match letter:
-            case 'x': return self.x < value
-            case 'm': return self.m < value
-            case 'a': return self.a < value
-            case 's': return self.s < value
+        index = order.index(letter)
+        return self.xmas[index] < value
 
     def is_greater_than(self, letter: chr, value: int) -> bool:
-        match letter:
-            case 'x': return self.x > value
-            case 'm': return self.m > value
-            case 'a': return self.a > value
-            case 's': return self.s > value
+        index = order.index(letter)
+        return self.xmas[index] > value
 
 class Ranges:
-    order = ['x', 'm', 'a', 's']
-
     def __init__(self, name: str, start: int, end: int):
         self.name = name
-        self.ranges = [range(start, end) for _ in Ranges.order]
+        self.ranges = [range(start, end) for _ in order]
 
     def fork_off_less_than(self, letter: chr, value: int):
-        index = Ranges.order.index(letter)
+        index = order.index(letter)
         r = self.ranges[index]
         fork = copy.deepcopy(self)
         r1 = range(r.start, value)
@@ -119,7 +110,7 @@ class Ranges:
         return fork
     
     def fork_off_greater_than(self, letter: chr, value: int):
-        index = Ranges.order.index(letter)
+        index = order.index(letter)
         r = self.ranges[index]
         fork = copy.deepcopy(self)
         r1 = range(r.start, value + 1)
@@ -140,9 +131,9 @@ class Helper:
                 if break_at_empty_line: break
                 continue
             if line[0] == '{':
-                x, m, a, s = [int(p[2:]) for p in line[1:-1].split(',')]
-                #print(f'x={x},m={m},a={a},s={s}')
-                parts.append(Part(x, m, a, s))
+                part = Part([int(p[2:]) for p in line[1:-1].split(',')])
+                #print(part.to_string())
+                parts.append(part)
             else:
                 name, second = line[:-1].split('{')
                 conditions = second.split(',')
