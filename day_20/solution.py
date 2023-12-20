@@ -1,6 +1,8 @@
 import re
 import time
 from queue import Queue
+from math import gcd
+from functools import reduce 
 
 class Part1:
     @staticmethod
@@ -30,8 +32,37 @@ class Part1:
 class Part2:
     @staticmethod
     def solution(lines: list[str]) -> int:
-        return 0
-
+        modules = Helper.parse_modules(lines)
+        # get starting modules
+        broadcaster = modules["broadcaster"]
+        button = Button("button")
+        button.destinations.append(broadcaster)
+        # get ending module
+        rx = modules["rx"]
+        # get parent
+        parent = rx.sources[0] # &zg
+        # get grandparents
+        grandparents = parent.sources # &vm, &lm, &jd, &fv
+        grandparent_lows = {}
+        # initialize memory
+        for _, m in modules.items(): m.initialize()
+        q = Queue()
+        i = 0
+        while True:
+            i += 1
+            q.put(Pulse(button, broadcaster, False))
+            while not q.empty():
+                p = q.get()
+                if not p.value and p.destination in grandparents:
+                    if not p.destination in grandparent_lows:
+                        #print(f'{p.source.name} -{"high" if p.value else "low"}-> {p.destination.name} at {i}')
+                        grandparent_lows[p.destination] = i
+                for p2 in p.destination.send_pulse(p.source, p.value):
+                    q.put(p2)
+            if len(grandparents) == len(grandparent_lows):
+                numbers = [v for _, v in grandparent_lows.items()]
+                return Helper.lcm(numbers)
+    
 class Pulse:
     def __init__(self, source, destination, value):
         self.source = source
@@ -52,7 +83,7 @@ class Module:
 
 class Button(Module): pass
 class Broadcaster(Module): pass
-class Generic(Module): pass
+class Output(Module): pass
 
 class FlipFlop(Module):
     def initialize(self):
@@ -92,11 +123,16 @@ class Helper:
         for k,v in destinations.items():
             source = modules[k]
             for name in v:
-                destination = modules[name] if name in modules else Generic(name)
+                if not name in modules:
+                    modules[name] = Output(name)
+                destination = modules[name]
                 #print(f'adding {destination.name} to {source.name}')
                 destination.sources.append(source)
                 source.destinations.append(destination)
         return modules
+    
+    def lcm(numbers):   
+        return reduce(lambda a,b: a*b // gcd(a,b), numbers)
 
 tic = time.perf_counter()
 #with open("sample1.txt", "r") as file:
@@ -107,5 +143,5 @@ print(f"Part 2: {Part2.solution(f)}")
 toc = time.perf_counter()
 print(f"Took {toc - tic:0.4f} seconds")
 # Part 1: 825896364
-# Part 2: 0
-# Took 0.0928 seconds
+# Part 2: 243566897206981
+# Took 0.4538 seconds
