@@ -1,6 +1,4 @@
-import copy
-import re
-import sys, getopt
+import sys
 import time
 from queue import Queue
 
@@ -8,41 +6,26 @@ class Part1:
     @staticmethod
     def solution(lines: list[str]) -> int:
         grid, start = Helper.build_grid(lines)
-        #mask = Helper.build_mask(grid)
-        #mask[start[0]][start[1]] = True
         q = Queue()
-        q.put([start])
+        q.put((start, 0))
         dirs = [(-1, 0),(1, 0),(0, -1),(0, 1)]
-        last_steps = set()
-        cycle_steps = set()
+        lookup = {} # key: (row, col), value: steps
         while not q.empty():
-            steps = q.get()
-            current = steps[-1]
-            if len(steps) > num_steps:
-                last_steps.add(current)
-            else:
-                for dir in dirs:
-                    next = tuple(sum(x) for x in zip(current, dir))
-                    if grid[next[0]][next[1]] == 0:
-                        if next in steps:                            
-                            #print(f'skipping {next}')
-                            first_index = steps.index(next)
-                            last_index = len(steps)
-                            diff = last_index - first_index
-                            remaining = num_steps - last_index 
-                            if remaining % diff == 0:
-                                #print(f'cycle found at {next} from {first_index} to {last_index}')                
-                                cycle_steps.add(next)
-                            continue
-                        #print(f'stepping from {current} to {next}')
-                        #mask[next[0]][next[1]] = True
-                        next_steps = steps.copy()
-                        next_steps.append(next)
-                        q.put(next_steps)
-        
-        last_steps |= cycle_steps # last_steps.union(cycle_steps)
-        Helper.update_grid(grid, last_steps)
+            (row, col), steps = q.get()
+            if steps <= num_steps:
+                for dy, dx in dirs:
+                    y = row + dy
+                    x = col + dx
+                    next = (y, x)
+                    if grid[y][x] == 0 and not next in lookup:
+                        lookup[next] = steps + 1
+                        q.put((next, steps + 1))
+        last_steps = set()
+        for index, steps in lookup.items():
+            if (index[0] + index[1]) % 2 == num_steps % 2:
+                last_steps.add(index)
         reached = len(last_steps)
+        Helper.update_grid(grid, last_steps)        
         Helper.print(grid)
         return reached
 
@@ -73,24 +56,8 @@ class Helper:
         return grid, start
 
     def update_grid(grid: list[list[int]], last_steps: set[tuple]):
-        for current in last_steps:
-            grid[current[0]][current[1]] = 1
-    
-    def build_mask(grid: list[list[int]]) -> list[list[bool]]:
-        mask = []
-        for row in grid: 
-            mask.append([val > 0 for val in row])
-        return mask
-    
-    def apply_mask(grid: list[list[int]], mask: list[list[bool]]) -> int:
-        size = len(grid)
-        reached = 0
-        for row in range(size):
-            for col in range(size):
-                if grid[row][col] == 0 and mask[row][col]:
-                    grid[row][col] = 1
-                    reached += 1
-        return reached
+        for row, col in last_steps:
+            grid[row][col] = 1
     
     def print(grid: list[list[int]]):
         size = len(grid)
@@ -101,22 +68,17 @@ class Helper:
                 elif grid[row][col] == 1: line += "O"
                 elif grid[row][col] == 2: line += "#"
             print(line)
-    
-    def walk(grid: list[list[int]], mask: list[list[bool]], index: tuple, steps: list[tuple], stop_at: int):
-        if len(steps) >= stop_at: return
-        steps.copy()
-
 
 num_steps = int(sys.argv[1]) if len(sys.argv) > 1 else 64
-        
 tic = time.perf_counter()
-with open("sample.txt", "r") as file:
-#with open("input.txt", "r") as file:
+#with open("sample.txt", "r") as file:
+with open("input.txt", "r") as file:
     f = file.read().splitlines()
 padded = Helper.pad_input(f)
 print(f"Part 1: {Part1.solution(padded)}")
 print(f"Part 2: {Part2.solution(padded)}")
 toc = time.perf_counter()
 print(f"Took {toc - tic:0.4f} seconds")
-
-# sample.txt = 38
+# Part 1: 3532
+# Part 2: 0
+# Took 0.0161 seconds
