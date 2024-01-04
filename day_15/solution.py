@@ -39,7 +39,7 @@ class Helper:
 tic = time.perf_counter()
 #with open("sample.txt", "r") as file:
 with open("input.txt", "r") as file:
-    f = file.read()
+    f = file.read().splitlines()[0] # all on the first line
 print(f"Part 1: {Part1.solution(f)}")
 print(f"Part 2: {Part2.solution(f)}")
 toc = time.perf_counter()
