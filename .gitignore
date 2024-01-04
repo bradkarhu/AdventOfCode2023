@@ -1,3 +1,6 @@
 puzzle.md
 *.txt
 .py*
+
+# don't ignore
+!requirements.txt
