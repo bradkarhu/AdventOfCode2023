@@ -1,5 +1,5 @@
 import re
-import sys
+from sys import argv
 
 def solve(lines: list[str]):
     sum = 0
@@ -26,7 +26,7 @@ def check_game(pulls: list[str]) -> bool:
                 return False
     return True
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

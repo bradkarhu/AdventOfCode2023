@@ -1,4 +1,4 @@
-import sys
+from sys import argv
 from queue import Queue
 import numpy as np
 
@@ -103,7 +103,7 @@ def write_grid(grid: list[list[int]], filename: str):
                 elif grid[row][col] == 2: line += "#"
             file.write(line + "\r\n")
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

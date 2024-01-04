@@ -1,6 +1,6 @@
 import copy
 import re
-import sys
+from sys import argv
 from queue import Queue
 from math import prod
 
@@ -72,7 +72,7 @@ def parse(lines: list[str], break_at_empty_line: bool = False) -> [dict, list[Pa
             workflows[name] = conditions
     return workflows, parts
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

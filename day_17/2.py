@@ -1,5 +1,5 @@
 from dijkstar import Graph, find_path
-import sys
+from sys import argv
 
 def solve(lines: list[str]):
     rg = range(1, 11)
@@ -59,7 +59,7 @@ def cost(u, v, edge, prev_edge):
             return 1e7
     return loss
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

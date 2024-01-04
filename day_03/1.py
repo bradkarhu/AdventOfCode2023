@@ -1,4 +1,4 @@
-import sys
+from sys import argv
 
 def solve(lines: list[str]):
     sum = 0
@@ -68,7 +68,7 @@ def get_number(line: str, index: int) -> [str, str]:
     #print(line)
     return line, number
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(pad_input(f))

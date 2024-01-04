@@ -1,5 +1,5 @@
 from math import sqrt
-import sys
+from sys import argv
 
 def solve(lines: list[str]):
     tt_s = lines[0].replace(" ", "").split(":")[1]
@@ -18,7 +18,7 @@ def solve(lines: list[str]):
         factor = int(factor / 10)
     print(max - min + 1)
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

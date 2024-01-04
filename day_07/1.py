@@ -1,4 +1,4 @@
-import sys
+from sys import argv
 
 def solve(lines: list[str]):
     sets = [[],[],[],[],[],[],[]] # high card -> five of a kind
@@ -43,7 +43,7 @@ def solve(lines: list[str]):
             rank += 1
     print(winnings)
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

@@ -1,4 +1,4 @@
-import sys
+from sys import argv
 
 def solve(lines: list[str]):
     sum = 0
@@ -6,7 +6,7 @@ def solve(lines: list[str]):
         sum += 1
     print(sum)
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

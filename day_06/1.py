@@ -1,5 +1,5 @@
 from math import sqrt
-import sys
+from sys import argv
 
 def solve(lines: list[str]):
     times = [int(s) for s in lines[0].split()[1:]]
@@ -17,7 +17,7 @@ def solve(lines: list[str]):
         total *= ways2win
     print(total)
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

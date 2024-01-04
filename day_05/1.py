@@ -1,4 +1,4 @@
-import sys
+from sys import argv
 
 def solve(lines: list[str]):
     min = -1
@@ -47,7 +47,7 @@ def get_destination(map: list[tuple], source: int) -> int:
     #print(f'{source} -> {destination}')
     return destination
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

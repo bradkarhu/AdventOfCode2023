@@ -1,5 +1,5 @@
 import re
-import sys
+from sys import argv
 
 def solve(lines: list[str]):
     sum = 0
@@ -29,7 +29,7 @@ def get_power(pulls: list[str]) -> int:
     #print(f'red={min_red}, green={min_green}, blue={min_blue}')
     return min_red * min_green * min_blue
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

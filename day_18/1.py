@@ -1,4 +1,4 @@
-import sys
+from sys import argv
 
 def solve(lines: list[str]):
     x = 0
@@ -33,7 +33,7 @@ def get_area(vertices) -> int:
         area -= vertices[i][1] * vertices[i + 1][0]
     return area
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

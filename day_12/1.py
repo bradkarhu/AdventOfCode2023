@@ -1,5 +1,5 @@
 import itertools
-import sys
+from sys import argv
 
 def solve(lines: list[str]):
     total = 0
@@ -45,7 +45,7 @@ def func(data: str, series: list[int], i: int, si: int, num: int):
     cache[key] = arrangements
     return arrangements
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

@@ -1,4 +1,4 @@
-import sys
+from sys import argv
 
 def solve(lines: list[str]):
     galaxies, per_row, per_col = find_galaxies(lines)
@@ -38,7 +38,7 @@ def find_galaxies(lines: list[str]) -> [list[tuple], list[bool], list[bool]]:
                 columns[i] += 1
     return galaxies, rows, columns
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

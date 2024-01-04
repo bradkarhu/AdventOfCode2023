@@ -1,4 +1,4 @@
-import sys
+from sys import argv
 
 def solve(lines: list[str]):
     num_cards = len(lines)
@@ -19,7 +19,7 @@ def solve(lines: list[str]):
     #print(f'cards: {cards_array}')
     print(sum(cards_array))
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

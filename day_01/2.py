@@ -1,5 +1,5 @@
 import re
-import sys
+from sys import argv
 
 def solve(lines: list[str]):
     sum = 0
@@ -24,7 +24,7 @@ def replace_words(line: str) -> str:
     cal = cal.replace("nine", "n9e")
     return cal
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

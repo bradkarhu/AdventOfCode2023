@@ -1,5 +1,5 @@
 import re
-import sys
+from sys import argv
 from queue import Queue
 from math import gcd
 from functools import reduce 
@@ -97,7 +97,7 @@ def parse_modules(lines: list[str]) -> dict:
 def lcm(numbers):   
     return reduce(lambda a,b: a*b // gcd(a,b), numbers)
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

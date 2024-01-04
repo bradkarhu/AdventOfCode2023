@@ -1,6 +1,6 @@
 from functools import reduce
 from math import gcd
-import sys
+from sys import argv
 
 def solve(lines: list[str]):
     a_nodes = get_nodes(lines, ending_in="A")
@@ -41,7 +41,7 @@ def get_nodes(lines: list[str], ending_in: str) -> int:
 def lcm(numbers):
     return reduce(lambda a,b: a*b // gcd(a,b), numbers)
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

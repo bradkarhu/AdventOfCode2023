@@ -1,10 +1,10 @@
-import sys
+from sys import argv
 import time
 from queue import Queue
 import numpy as np
 
-num_steps = int(sys.argv[1]) if len(sys.argv) > 1 else 64
-target_steps = int(sys.argv[2]) if len(sys.argv) > 2 else 26501365
+num_steps = int(argv[1]) if len(argv) > 1 else 64
+target_steps = int(argv[2]) if len(argv) > 2 else 26501365
 
 class Part1:
     @staticmethod

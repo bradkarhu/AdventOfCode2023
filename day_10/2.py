@@ -1,4 +1,4 @@
-import sys
+from sys import argv
 
 def solve_part1(lines: list[str]):
     s_index = get_s(lines)
@@ -108,7 +108,7 @@ def get_next(lines: list[str], start: [int, int], skip: [int, int]) -> [int, int
     else:
         raise Exception(f"[get_next] should not be able to get here: {current} {start}")
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 part1 = pad_input(f)

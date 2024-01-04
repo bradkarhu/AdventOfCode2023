@@ -1,4 +1,4 @@
-import sys
+from sys import argv
 
 def solve(lines: list[str]):
     ans = get_num_steps(lines, "AAA", ["ZZZ"])
@@ -26,7 +26,7 @@ def get_num_steps(lines: list[str], start: str, stop_nodes: list[str]) -> int:
         num_steps += 1
     return num_steps
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

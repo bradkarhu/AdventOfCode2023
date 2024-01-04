@@ -1,4 +1,4 @@
-import sys
+from sys import argv
 
 def solve(lines: list[str]):
     lineset = []
@@ -40,7 +40,7 @@ def is_reflection(lines: list[str], a: int, b: int) -> bool:
     if lines[a] != lines[b]: return False
     return is_reflection(lines, a - 1, b + 1)
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
     f.append("") # pad end with a blank line
 

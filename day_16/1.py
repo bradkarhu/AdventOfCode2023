@@ -1,4 +1,4 @@
-import sys
+from sys import argv
 
 class Grid:
     def __init__(self, lines: list[str]):
@@ -125,7 +125,7 @@ def solve(lines: list[str]):
     total = grid.get_energized()
     print(total)
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(f)

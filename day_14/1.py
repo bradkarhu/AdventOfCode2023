@@ -1,4 +1,4 @@
-import sys
+from sys import argv
 
 def solve(lines: list[str]):
     grid = build_grid(lines)
@@ -60,7 +60,7 @@ def get_load(grid: list[list[int]]) -> int:
         load -= 1
     return sum
 
-with open(sys.argv[1], "r") as file:
+with open(argv[1], "r") as file:
     f = file.read().splitlines()
 
 solve(pad_input(f))
